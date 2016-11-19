@@ -25,6 +25,9 @@
   <string name="strobe_on">Strobe on</string>
   <string name="strobe_off">Strobe off</string>
 
+  <string name="debug_on">Debug on</string>
+  <string name="debug_off">Debug off</string>
+
   <string name="downsample_on">Downsampling on</string>
   <string name="downsample_off">Downsampling off</string>
 

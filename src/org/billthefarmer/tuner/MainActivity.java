@@ -40,6 +40,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -165,7 +166,10 @@ public class MainActivity extends Activity
 	// Scope
 
 	if (scope != null)
+	{
 	    scope.setOnClickListener(this);
+	    scope.setOnLongClickListener(this);
+	}
 
 	// Spectrum
 
@@ -271,6 +275,17 @@ public class MainActivity extends Activity
 	int id = v.getId();
 	switch (id)
 	{
+	    // Scope
+
+	case R.id.scope:
+	    audio.debug = !audio.debug;
+
+	    if (audio.debug)
+		showToast(R.string.debug_on);
+	    else
+		showToast(R.string.debug_off);
+	    break;
+
 	    // Spectrum
 
 	case R.id.spectrum:
@@ -592,6 +607,8 @@ public class MainActivity extends Activity
 
     protected class Audio implements Runnable
     {
+	private static final String TAG = "Audio";
+
 	// Preferences
 
 	protected int input;
@@ -603,6 +620,7 @@ public class MainActivity extends Activity
 	protected boolean strobe;
 	protected boolean multiple;
 	protected boolean downsample;
+	protected boolean debug;
 
 	protected double reference;
 
@@ -869,6 +887,9 @@ public class MainActivity extends Activity
 		    break;
 		}
 
+		if (debug)
+		    Log.d(TAG, "Read data, size = " + size);
+
 		// If display not locked update scope
 
 		if (scope != null && !lock)
@@ -877,6 +898,9 @@ public class MainActivity extends Activity
 		// Move the main data buffer up
 
 		System.arraycopy(buffer, STEP, buffer, 0, SAMPLES - STEP);
+
+		if (debug)
+		    Log.d(TAG, "Copy to buffer");
 
 		// Max signal
 
@@ -902,7 +926,10 @@ public class MainActivity extends Activity
 		    double v = data[i * divisor] / 32768.0;
 		    rm += v * v;
 		}
-		
+
+		if (debug)
+		    Log.d(TAG, "Filtered");
+
 		// Signal value
 
 		rm /= STEP;
@@ -939,9 +966,15 @@ public class MainActivity extends Activity
 		    x.r[i] = buffer[i] / norm * window;
 		}
 
+		if (debug)
+		    Log.d(TAG, "Windowed");
+
 		// do FFT for tuner
 
 		fftr(x);
+
+		if (debug)
+		    Log.d(TAG, "FFTed");
 
 		// Process FFT output for tuner
 
@@ -986,6 +1019,9 @@ public class MainActivity extends Activity
 
 		    dx[i] = xa[i] - xa[i - 1];
 		}
+
+		if (debug)
+		    Log.d(TAG, "Processed");
 
 		// Downsample
 
@@ -1109,6 +1145,9 @@ public class MainActivity extends Activity
 		    }
 		}
 
+		if (debug)
+		    Log.d(TAG, "Maximised");
+
 		// Found flag
 
 		boolean found = false;
@@ -1132,7 +1171,10 @@ public class MainActivity extends Activity
 		    // Don't count silly values
 
 		    if (Double.isNaN(cf))
-			continue;
+		    {
+			cf = 0;
+			found = false;
+		    }
 
 		    // Reference note
 
@@ -1198,6 +1240,9 @@ public class MainActivity extends Activity
 
 		if (found)
 		{
+		    if (debug)
+			Log.d(TAG, "Found");
+
 		    // If display not locked
 
 		    if (!lock)
@@ -1220,6 +1265,9 @@ public class MainActivity extends Activity
 
 		else
 		{
+		    if (debug)
+			Log.d(TAG, "Not found");
+
 		    // If display not locked
 
 		    if (!lock)
