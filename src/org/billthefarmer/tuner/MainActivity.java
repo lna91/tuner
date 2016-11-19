@@ -1174,6 +1174,9 @@ public class MainActivity extends Activity
 		    {
 			cf = 0;
 			found = false;
+
+			if (debug)
+			    Log.d(TAG, "Invalid cf = NaN");
 		    }
 
 		    // Reference note
@@ -1221,6 +1224,9 @@ public class MainActivity extends Activity
 		    {
 			cents = 0.0;
 			found = false;
+
+			if (debug)
+			    Log.d(TAG, "Invalid cents = NaN");
 		    }
 
 		    // Ignore if not within 50 cents of reference note
