@@ -967,7 +967,7 @@ public class MainActivity extends Activity
 		}
 
 		if (debug)
-		    Log.d(TAG, "Windowed");
+		    Log.d(TAG, "Windowed, dmax = " + dmax);
 
 		// do FFT for tuner
 
@@ -1146,7 +1146,7 @@ public class MainActivity extends Activity
 		}
 
 		if (debug)
-		    Log.d(TAG, "Maximised");
+		    Log.d(TAG, "Maximised, max = " + max);
 
 		// Found flag
 
@@ -1272,7 +1272,7 @@ public class MainActivity extends Activity
 		else
 		{
 		    if (debug)
-			Log.d(TAG, "Not found");
+			Log.d(TAG, "Not found, frequency = " + frequency);
 
 		    // If display not locked
 
